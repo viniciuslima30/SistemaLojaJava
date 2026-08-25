@@ -7,7 +7,6 @@ public class Cliente {
     public Cliente(String nome, UUID id) {
         this.nome = nome;
         this.id = id;
-
     }
 
     public String getNome() {
