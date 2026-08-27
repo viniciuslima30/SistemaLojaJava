@@ -54,20 +54,20 @@ public class Loja {
 
         if (produtoExiste != null) { // se produto existe
             produtoExiste.aumentarEstoque(estoque);
-            System.out.println("Produto já existe, quantidade aumentada!");
+            System.out.println("Produto já existe, quantidade aumentada!\n");
         } else {
             Produto novoProduto = new Produto(nome, preco, estoque);
             listaDeProdutos.add(novoProduto);
-            System.out.println("Produto cadastrado com sucesso!");
+            System.out.println("Produto cadastrado com sucesso!\n");
         }
     }
 
-    // MÉTODO CORRETO
+    // MÉTODO CORRETO OBS: ACEITA NOME DUPLICADO; N TEM BANCO 
     public void cadastrarCliente(String nome) {
         UUID id = UUID.randomUUID();
         Cliente novoCliente = new Cliente(nome, id);
         listaDeClientes.add(novoCliente);
-        System.out.println("Cliente cadastrado com sucesso!");
+        System.out.println("Cliente cadastrado com sucesso!\n");
     }
 
     // MÉTODO CORRETO
