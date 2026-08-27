@@ -72,7 +72,7 @@ public class Main {
                     loja.verVendas();
                 }
                 case 7 -> {
-
+                    loja.cancelarVenda("Vinicius");
                 }
                 default -> {
                     System.out.println("Escolha uma opção entre 0 e 7!");

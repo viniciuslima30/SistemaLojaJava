@@ -24,4 +24,8 @@ public class Produto {
     public void retirarEstoque(int quantidade) {
         this.estoque -= quantidade;
     }
+
+    public void aumentarEstoque(int quantidade) {
+        this.estoque += quantidade;
+    }
 }

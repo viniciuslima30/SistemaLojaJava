@@ -7,6 +7,18 @@ public class Loja {
     private ArrayList<Cliente> listaDeClientes = new ArrayList<>();
     private ArrayList<Venda> listaDeVendas = new ArrayList<>();
 
+    public ArrayList<Produto> getListaDeProdutos() {
+        return listaDeProdutos;
+    }
+
+    public ArrayList<Cliente> getListaDeClientes() {
+        return listaDeClientes;
+    }
+
+    public ArrayList<Venda> getListaDeVendas() {
+        return listaDeVendas;
+    }
+
     // MÉTODO AUXILIAR CORRETO
 
     public Produto procurarProduto(String nomeProduto) {
@@ -22,6 +34,7 @@ public class Loja {
         return objProduto;
     }
 
+    // MÉTODO AUXILIAR CORRETO
     public Cliente procurarCliente(String nomeCliente) {
         Cliente objCliente = null;
 
@@ -35,14 +48,21 @@ public class Loja {
         return objCliente;
     }
 
-    // PRECISA DE VALIDAÇÃO 
+    // MÉTODO CORRETO
     public void cadastrarProduto(String nome, double preco, int estoque) {
-        Produto novoProduto = new Produto(nome, preco, estoque);
-        listaDeProdutos.add(novoProduto);
-        System.out.println("Produto cadastrado com sucesso!");
+        Produto produtoExiste = procurarProduto(nome);
+
+        if (produtoExiste != null) { // se produto existe
+            produtoExiste.aumentarEstoque(estoque);
+            System.out.println("Produto já existe, quantidade aumentada!");
+        } else {
+            Produto novoProduto = new Produto(nome, preco, estoque);
+            listaDeProdutos.add(novoProduto);
+            System.out.println("Produto cadastrado com sucesso!");
+        }
     }
 
-    // PRECISA VALIDAÇÃO
+    // MÉTODO CORRETO
     public void cadastrarCliente(String nome) {
         UUID id = UUID.randomUUID();
         Cliente novoCliente = new Cliente(nome, id);
@@ -76,7 +96,7 @@ public class Loja {
         }
     }
 
-    // MÉTODO CRIA A VENDA E JOGA OS ITEMS EM UMA LISTADEITEMS
+    // MÉTODO CORRETO
     public void criarVenda(String nomeProduto, int quantidadeProduto, String nomeComprador) {
         Produto produto = procurarProduto(nomeProduto);
         
@@ -100,7 +120,7 @@ public class Loja {
             listaDeVendas.add(venda);
             
         } else {
-            System.out.println("Quantidade negativa ou maior que o estoque atual!");
+            System.out.println("Quantidade negativa ou maior que o estoque atual!\n");
         }
     }
 
@@ -111,5 +131,39 @@ public class Loja {
             System.out.println("Id do comprador: " + venda.getComprador().getId());
             venda.mostrarItems();
         }
+    }
+
+    // MÉTODO CORRETO
+    public void cancelarVenda(String nomeCliente) {
+        Cliente cliente = procurarCliente(nomeCliente);
+        int qnt = 0;
+        String nome = "";
+
+        if (cliente != null) {
+            for (Venda venda : listaDeVendas) {
+                if (venda.getComprador().equals(cliente)) {
+                    ArrayList<Item> items = venda.getItems();
+
+                    for (Item item : items) {
+                        qnt = item.getQuantidade();
+                        nome = item.getNome();
+                        break;    
+                    }
+
+                    venda.getItems().clear();
+                    getListaDeVendas().remove(venda);
+                    System.out.println("Compra cancelada!\n");
+
+                    for (Produto produto : listaDeProdutos) {
+                        if (produto.getNome().equalsIgnoreCase(nome)) {
+                            produto.aumentarEstoque(qnt);
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        
     }
 }
