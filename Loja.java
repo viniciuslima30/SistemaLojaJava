@@ -5,7 +5,7 @@ public class Loja {
     
     private ArrayList<Produto> listaDeProdutos = new ArrayList<>();
     private ArrayList<Cliente> listaDeClientes = new ArrayList<>();
-    private ArrayList<Venda> listaDeVendas = new ArrayList<>();
+    private ArrayList<Venda> listaDeVendas = new ArrayList<>(); //comprador, items, id
 
     public ArrayList<Produto> getListaDeProdutos() {
         return listaDeProdutos;
@@ -50,6 +50,11 @@ public class Loja {
 
     // MÉTODO CORRETO
     public void cadastrarProduto(String nome, double preco, int estoque) {
+        if (estoque <= 0) {
+            System.out.println("Quantidade não pode ser 0 ou negativa!");
+            return;
+        }
+
         Produto produtoExiste = procurarProduto(nome);
 
         if (produtoExiste != null) { // se produto existe
@@ -98,8 +103,15 @@ public class Loja {
 
     // MÉTODO CORRETO
     public void criarVenda(String nomeProduto, int quantidadeProduto, String nomeComprador) {
+        if (quantidadeProduto <= 0) {
+            System.out.println("Quantidade não pode ser 0 ou negativa!");
+            return;
+        }
+        
         Produto produto = procurarProduto(nomeProduto);
         
+        UUID id = UUID.randomUUID();
+
         if (produto == null) {
             System.out.println("Produto não encontrado!");
             return;
@@ -115,10 +127,9 @@ public class Loja {
         if (quantidadeProduto <= produto.getEstoque()) {
             produto.retirarEstoque(quantidadeProduto);
             Item item = new Item(produto.getNome(), produto.getPreco(), quantidadeProduto);
-            Venda venda = new Venda(cliente);
+            Venda venda = new Venda(cliente, id);
             venda.getItems().add(item);
             listaDeVendas.add(venda);
-            
         } else {
             System.out.println("Quantidade negativa ou maior que o estoque atual!\n");
         }
@@ -134,36 +145,36 @@ public class Loja {
     }
 
     // MÉTODO CORRETO
-    public void cancelarVenda(String nomeCliente) {
-        Cliente cliente = procurarCliente(nomeCliente);
+    public void cancelarVenda(UUID id) {
+        String nomeProd = "";
         int qnt = 0;
-        String nome = "";
+        Venda vendaEncontrada = null;
 
-        if (cliente != null) {
-            for (Venda venda : listaDeVendas) {
-                if (venda.getComprador().equals(cliente)) {
-                    ArrayList<Item> items = venda.getItems();
-
-                    for (Item item : items) {
-                        qnt = item.getQuantidade();
-                        nome = item.getNome();
-                        break;    
-                    }
-
-                    venda.getItems().clear();
-                    getListaDeVendas().remove(venda);
-                    System.out.println("Compra cancelada!\n");
-
-                    for (Produto produto : listaDeProdutos) {
-                        if (produto.getNome().equalsIgnoreCase(nome)) {
-                            produto.aumentarEstoque(qnt);
-                            break;
-                        }
-                    }
+        for (Venda venda : listaDeVendas) {
+            if (venda.getId().equals(id)) {
+                vendaEncontrada = venda;
+                for (Item item : venda.getItems()) {
+                    nomeProd = item.getNome();
+                    qnt = item.getQuantidade();
                     break;
-                }
+                }   
             }
         }
-        
+
+        if (vendaEncontrada == null) {
+            System.out.println("Id errado ou não existe!");
+            return;
+        }
+
+        for (Produto produto : listaDeProdutos) {
+            if (produto.getNome().equalsIgnoreCase(nomeProd)) {
+                produto.aumentarEstoque(qnt);
+                break;
+            }
+        }
+
+        listaDeVendas.remove(vendaEncontrada);
+
+        System.out.println("Compra cancelada com sucesso!");
     }
 }

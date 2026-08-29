@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.UUID;
 
 public class Main {
 
@@ -26,11 +27,12 @@ public class Main {
         System.out.print("Digite a opção de 0 a 7: ");
         while (escolha.isEmpty()) {
             escolha = scanner.nextLine().trim();
-            try {
+            if (escolha.matches("^-?\\d+$")) {
                 escolhaInt = Integer.parseInt(escolha);
-            } catch (NumberFormatException e) {
-                System.out.print("Digite apenas números de 0 a 7: ");
-                escolha = "";
+                if (escolhaInt > 7 || escolhaInt < 0) {
+                    System.out.print("Digite um número entre 0 e 7: ");
+                    escolha = "";
+                }
             }
         }
 
@@ -45,8 +47,7 @@ public class Main {
         
         while (nomeProduto.isEmpty()) {
             System.out.print("Digite o nome do produto: ");
-            String nomeTemp = "";
-            nomeTemp = scanner.nextLine().trim();
+            String nomeTemp = scanner.nextLine().trim();  
             if (nomeTemp.matches("^\\p{L}+$")) {
                 nomeProduto = nomeTemp;
             } else {
@@ -57,8 +58,7 @@ public class Main {
 
         while (preco.isEmpty()) {
             System.out.print("Digite o preço do produto: ");
-            String precoTemp = "";
-            precoTemp = scanner.nextLine().trim();
+            String precoTemp = scanner.nextLine().trim();
             if (precoTemp.matches("^[+-]?(\\d+(\\.\\d*)?|\\.\\d+)([eE][+-]?\\d+)?$")) {
                 preco = precoTemp;
             } else {
@@ -69,8 +69,7 @@ public class Main {
 
         while (quantidade.isEmpty()) {
             System.out.print("Digite a quantidade de produtos: ");
-            String qntTemp = "";
-            qntTemp = scanner.nextLine().trim();
+            String qntTemp = scanner.nextLine().trim();
             if (qntTemp.matches("^-?\\d+$")) {
                 quantidade = qntTemp;
             } else {
@@ -141,6 +140,24 @@ public class Main {
         loja.criarVenda(nomeProduto, Integer.parseInt(quantidade), nomeCliente);
     }
 
+    public static void chamarCancelarVenda(Scanner scanner, Loja loja) {
+        UUID id = null;
+
+        System.out.print("Digite o ID da compra: ");
+        while (id == null) {
+            String idTemp = scanner.nextLine().trim();
+            try {
+                UUID idObj = UUID.fromString(idTemp);
+                id = idObj;
+            } catch (Exception e) {
+                System.out.print("Digite um id válido: ");
+            }
+                
+        }
+        
+        loja.cancelarVenda(id);
+    }
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         Loja loja = new Loja();
@@ -176,13 +193,14 @@ public class Main {
                     System.out.println("Você escolheu a opção de criar uma venda!\n");
                     chamarCriarVenda(scanner, loja);
                 }
-                case 6 -> {
+                case 6 -> { // VER VENDAS
                     loja.verVendas();
                 }
-                case 7 -> {
-                    loja.cancelarVenda("Vinicius");
+                case 7 -> { // CANCELAR VENDA
+                    System.out.println("Você escolheu a opção de cencelar uma venda!\n");
+                    chamarCancelarVenda(scanner, loja);
                 }
-                default -> {
+                default -> { 
                     System.out.println("Escolha uma opção entre 0 e 7!");
                 }
             }
