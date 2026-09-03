@@ -51,8 +51,7 @@ public class Loja {
     // MÉTODO CORRETO
     public void cadastrarProduto(String nome, double preco, int estoque) {
         if (estoque <= 0) {
-            System.out.println("Quantidade não pode ser 0 ou negativa!");
-            return;
+            throw new QuantidadeProdutoInvalidaException("Quantidade igual ou menor que zero");
         }
 
         Produto produtoExiste = procurarProduto(nome);
